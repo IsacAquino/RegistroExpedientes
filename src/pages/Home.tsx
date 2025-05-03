@@ -14,14 +14,14 @@ type Expediente = {
 };
 
 const estados = ['Pendiente', 'En Proceso', 'En Pausa', 'Completada'];
-const colores: { [key: string]: string } = {
+const colores: Record<string, string> = {
     'Pendiente': '#d3d3d3',
     'En Proceso': '#212529',
     'En Pausa': '#f0ad4e',
     'Completada': '#28a745'
 };
 
-const iconos: { [key: string]: string } = {
+const iconos: Record<string, string> = {
     'Pendiente': '⏰',
     'En Proceso': '▶️',
     'En Pausa': '⏸️',
@@ -50,7 +50,10 @@ export default function Home() {
 
     useEffect(() => {
         const user = auth.currentUser;
-        if (!user) return navigate('/login');
+        if (!user) {
+            navigate('/login');
+            return;
+        }
 
         const unsubscribe = onSnapshot(collection(db, 'antecedentes'), (snapshot) => {
             const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Expediente[];
@@ -66,7 +69,7 @@ export default function Home() {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [navigate]);
 
     const cerrarSesion = async () => {
         await auth.signOut();
@@ -98,7 +101,7 @@ export default function Home() {
         return `${dia}/${mes}/${año}`;
     };
 
-    const guardarExpediente = async (e: React.FormEvent) => {
+    const guardarExpediente = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const user = auth.currentUser;
         if (!user) return;
@@ -135,11 +138,11 @@ export default function Home() {
     };
 
     const editarExpediente = (expediente: Expediente) => {
-        setTitulo(expediente.codigo || '');
-        setDescripcion(expediente.descripcion || '');
-        setFecha(convertirADateInput(expediente.creado || ''));
-        setVencimiento(convertirADateInput(expediente.vencimiento || ''));
-        setEstado(expediente.estado || 'Pendiente');
+        setTitulo(expediente.codigo ?? '');
+        setDescripcion(expediente.descripcion ?? '');
+        setFecha(convertirADateInput(expediente.creado ?? ''));
+        setVencimiento(convertirADateInput(expediente.vencimiento ?? ''));
+        setEstado(expediente.estado ?? 'Pendiente');
         setExpedienteEditar(expediente);
         setModoEdicion(true);
         setMostrarFormulario(true);
@@ -166,6 +169,7 @@ export default function Home() {
         const hoy = new Date().toISOString().split('T')[0];
         return fechaStr === hoy;
     };
+
 
     return (
         <div style={styles.container}>
@@ -267,7 +271,7 @@ export default function Home() {
     );
 }
 
-const styles = {
+const styles: { [key: string]: CSSProperties } = {
     container: { backgroundColor: '#f8f9fa', minHeight: '100vh', padding: '20px' },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
     logoutBtn: { backgroundColor: '#6c757d', color: '#fff', padding: '10px 16px', border: 'none', borderRadius: 6, marginLeft: 10, cursor: 'pointer' },
