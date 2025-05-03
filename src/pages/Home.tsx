@@ -3,15 +3,25 @@ import { collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc } from 'fireb
 import { auth, db } from '../firebase/firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 
+type Expediente = {
+    id: string;
+    uid?: string;
+    codigo?: string;
+    descripcion?: string;
+    estado?: string;
+    creado?: string;
+    vencimiento?: string;
+};
+
 const estados = ['Pendiente', 'En Proceso', 'En Pausa', 'Completada'];
-const colores = {
+const colores: { [key: string]: string } = {
     'Pendiente': '#d3d3d3',
     'En Proceso': '#212529',
     'En Pausa': '#f0ad4e',
     'Completada': '#28a745'
 };
 
-const iconos = {
+const iconos: { [key: string]: string } = {
     'Pendiente': '⏰',
     'En Proceso': '▶️',
     'En Pausa': '⏸️',
@@ -19,10 +29,10 @@ const iconos = {
 };
 
 export default function Home() {
-    const [expedientes, setExpedientes] = useState([]);
+    const [expedientes, setExpedientes] = useState<Expediente[]>([]);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [modoEdicion, setModoEdicion] = useState(false);
-    const [expedienteEditar, setExpedienteEditar] = useState(null);
+    const [expedienteEditar, setExpedienteEditar] = useState<Expediente | null>(null);
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [estado, setEstado] = useState('Pendiente');
@@ -32,30 +42,30 @@ export default function Home() {
         hoy.setDate(hoy.getDate() + 7);
         return hoy.toISOString().split('T')[0];
     });
-    const [menuAbiertoId, setMenuAbiertoId] = useState(null);
+    const [menuAbiertoId, setMenuAbiertoId] = useState<string | null>(null);
     const navigate = useNavigate();
 
-    const fechaInputRef = useRef(null);
-    const vencimientoInputRef = useRef(null);
+    const fechaInputRef = useRef<HTMLInputElement>(null);
+    const vencimientoInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         const user = auth.currentUser;
         if (!user) return navigate('/login');
 
         const unsubscribe = onSnapshot(collection(db, 'antecedentes'), (snapshot) => {
-            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Expediente[];
             const soloMios = data.filter(d => d.uid === user.uid);
 
             const normalizados = soloMios.map(e => ({
                 ...e,
-                creado: normalizarFechaISO(e.creado),
-                vencimiento: normalizarFechaISO(e.vencimiento)
+                creado: normalizarFechaISO(e.creado || ''),
+                vencimiento: normalizarFechaISO(e.vencimiento || '')
             }));
 
             setExpedientes(normalizados);
         });
 
-        return unsubscribe;
+        return () => unsubscribe();
     }, []);
 
     const cerrarSesion = async () => {
@@ -63,7 +73,7 @@ export default function Home() {
         navigate('/login');
     };
 
-    const normalizarFechaISO = (fechaStr) => {
+    const normalizarFechaISO = (fechaStr: string): string => {
         if (!fechaStr) return '';
         if (fechaStr.includes('/')) {
             const [dia, mes, año] = fechaStr.split('/');
@@ -72,7 +82,7 @@ export default function Home() {
         return fechaStr;
     };
 
-    const convertirADateInput = (fechaStr) => {
+    const convertirADateInput = (fechaStr: string): string => {
         if (!fechaStr) return '';
         if (fechaStr.includes('/')) {
             const [dia, mes, año] = fechaStr.split('/');
@@ -81,18 +91,19 @@ export default function Home() {
         return fechaStr;
     };
 
-    const formatearFechaVisual = (fechaStr) => {
+    const formatearFechaVisual = (fechaStr: string): string => {
         if (!fechaStr) return '';
         if (fechaStr.includes('/')) return fechaStr;
         const [año, mes, dia] = fechaStr.split('-');
         return `${dia}/${mes}/${año}`;
     };
 
-    const guardarExpediente = async (e) => {
+    const guardarExpediente = async (e: React.FormEvent) => {
         e.preventDefault();
         const user = auth.currentUser;
+        if (!user) return;
 
-        const nuevoExpediente = {
+        const nuevoExpediente: Omit<Expediente, 'id'> = {
             codigo: titulo,
             descripcion,
             estado,
@@ -123,34 +134,34 @@ export default function Home() {
         setExpedienteEditar(null);
     };
 
-    const editarExpediente = (expediente) => {
-        setTitulo(expediente.codigo);
-        setDescripcion(expediente.descripcion);
-        setFecha(convertirADateInput(expediente.creado));
-        setVencimiento(convertirADateInput(expediente.vencimiento));
-        setEstado(expediente.estado);
+    const editarExpediente = (expediente: Expediente) => {
+        setTitulo(expediente.codigo || '');
+        setDescripcion(expediente.descripcion || '');
+        setFecha(convertirADateInput(expediente.creado || ''));
+        setVencimiento(convertirADateInput(expediente.vencimiento || ''));
+        setEstado(expediente.estado || 'Pendiente');
         setExpedienteEditar(expediente);
         setModoEdicion(true);
         setMostrarFormulario(true);
         setMenuAbiertoId(null);
     };
 
-    const cambiarEstado = async (id, nuevoEstado) => {
+    const cambiarEstado = async (id: string, nuevoEstado: string) => {
         await updateDoc(doc(db, 'antecedentes', id), { estado: nuevoEstado });
         setMenuAbiertoId(null);
     };
 
-    const eliminarExpediente = async (id) => {
+    const eliminarExpediente = async (id: string) => {
         await deleteDoc(doc(db, 'antecedentes', id));
     };
 
-    const estaVencido = (fechaStr) => {
+    const estaVencido = (fechaStr: string): boolean => {
         if (!fechaStr) return false;
         const hoy = new Date().toISOString().split('T')[0];
         return fechaStr < hoy;
     };
 
-    const esHoy = (fechaStr) => {
+    const esHoy = (fechaStr: string): boolean => {
         if (!fechaStr) return false;
         const hoy = new Date().toISOString().split('T')[0];
         return fechaStr === hoy;
