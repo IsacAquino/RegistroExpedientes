@@ -232,15 +232,42 @@ export default function Home() {
                                             <div>
                                                 <strong style={{ fontSize: 16 }}>{e.codigo}</strong>
                                                 <p style={{ margin: '4px 0', fontSize: 14 }}>{e.descripcion}</p>
-                                                <p style={{ margin: '4px 0', fontSize: 12 }}>Creado: {formatearFechaVisual(e.creado)}</p>
-                                                <p style={{ margin: '4px 0', fontSize: 12, color: vencido ? 'red' : hoy ? '#d38b00' : '#333', fontWeight: vencido || hoy ? 'bold' : 'normal' }}>
-                                                    <span>{vencido ? '🔴' : hoy ? '🟡' : '🗓️'} Vence: {formatearFechaVisual(e.vencimiento)}</span>
-                                                    {vencido && <span style={{ marginLeft: 6, background: 'red', color: 'white', padding: '2px 6px', borderRadius: 4, fontSize: 10 }}>Vencido</span>}
-                                                    {hoy && !vencido && <span style={{ marginLeft: 6, background: '#d38b00', color: 'white', padding: '2px 6px', borderRadius: 4, fontSize: 10 }}>Hoy</span>}
+                                                <p style={{ margin: '4px 0', fontSize: 12 }}>Creado: {formatearFechaVisual(e.creado ?? '')}</p>
+                                                <p style={{
+                                                    margin: '4px 0',
+                                                    fontSize: 12,
+                                                    color: vencido ? 'red' : hoy ? '#d38b00' : '#333',
+                                                    fontWeight: vencido || hoy ? 'bold' : 'normal'
+                                                }}>
+                                                    <span>{vencido ? '🔴' : hoy ? '🟡' : '🗓️'} Vence: {formatearFechaVisual(e.vencimiento ?? '')}</span>
+
+                                                    {vencido && <span style={{
+                                                        marginLeft: 6,
+                                                        background: 'red',
+                                                        color: 'white',
+                                                        padding: '2px 6px',
+                                                        borderRadius: 4,
+                                                        fontSize: 10
+                                                    }}>Vencido</span>}
+                                                    {hoy && !vencido && <span style={{
+                                                        marginLeft: 6,
+                                                        background: '#d38b00',
+                                                        color: 'white',
+                                                        padding: '2px 6px',
+                                                        borderRadius: 4,
+                                                        fontSize: 10
+                                                    }}>Hoy</span>}
                                                 </p>
                                             </div>
-                                            <div style={{ position: 'relative' }}>
-                                                <button onClick={() => setMenuAbiertoId(menuAbiertoId === e.id ? null : e.id)} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'black' }}>⋮</button>
+                                            <div style={{position: 'relative'}}>
+                                                <button
+                                                    onClick={() => setMenuAbiertoId(menuAbiertoId === e.id ? null : e.id)}
+                                                    style={{
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        fontSize: 20,
+                                                        cursor: 'pointer',
+                                                        color: 'black' }}>⋮</button>
                                                 {menuAbiertoId === e.id && (
                                                     <div style={styles.menuDesplegable}>
                                                         <button style={styles.menuItem} onClick={() => editarExpediente(e)}>✏️ Editar</button>
