@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, CSSProperties } from 'react';
 import { auth } from '../firebase/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
@@ -8,13 +8,14 @@ export default function Login() {
     const [contraseña, setContraseña] = useState('');
     const navigate = useNavigate();
 
-    const iniciarSesion = async (e) => {
+    const iniciarSesion = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             await signInWithEmailAndPassword(auth, email, contraseña);
             navigate('/');
         } catch (error) {
-            alert('Error al iniciar sesión: ' + error.message);
+            const err = error as Error;
+            alert('Error al iniciar sesión: ' + err.message);
         }
     };
 
@@ -27,7 +28,7 @@ export default function Login() {
                     type="email"
                     placeholder="Correo electrónico"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                     required
                     style={styles.input}
                 />
@@ -36,7 +37,7 @@ export default function Login() {
                     type="password"
                     placeholder="Contraseña"
                     value={contraseña}
-                    onChange={(e) => setContraseña(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContraseña(e.target.value)}
                     required
                     style={styles.input}
                 />
@@ -52,8 +53,7 @@ export default function Login() {
     );
 }
 
-const styles = {
-
+const styles: { [key: string]: CSSProperties } = {
     container: {
         display: 'flex',
         height: '100vh',
@@ -86,11 +86,6 @@ const styles = {
         transition: 'border 0.3s',
         boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)',
     },
-    inputFocus: {
-        border: '1px solid #007bff',
-    },
-
-
     button: {
         padding: 12,
         backgroundColor: '#007bff',

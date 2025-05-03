@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from 'react';
 import { collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebaseConfig';
 import { useNavigate } from 'react-router-dom';
+import { CSSProperties } from 'react';
+
 
 type Expediente = {
     id: string;

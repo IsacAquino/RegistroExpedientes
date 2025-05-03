@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, CSSProperties } from 'react';
 import { auth } from '../firebase/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,7 @@ export default function Register() {
     const [confirmar, setConfirmar] = useState('');
     const navigate = useNavigate();
 
-    const registrar = async (e) => {
+    const registrar = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (contraseña !== confirmar) {
             alert('Las contraseñas no coinciden');
@@ -18,9 +18,10 @@ export default function Register() {
 
         try {
             await createUserWithEmailAndPassword(auth, email, contraseña);
-            navigate('/');
+            navigate('/login');
         } catch (error) {
-            alert('Error al registrar: ' + error.message);
+            const err = error as Error;
+            alert('Error al registrar: ' + err.message);
         }
     };
 
@@ -33,7 +34,7 @@ export default function Register() {
                     type="email"
                     placeholder="Correo electrónico"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                     required
                     style={styles.input}
                 />
@@ -42,7 +43,7 @@ export default function Register() {
                     type="password"
                     placeholder="Contraseña"
                     value={contraseña}
-                    onChange={(e) => setContraseña(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContraseña(e.target.value)}
                     required
                     style={styles.input}
                 />
@@ -51,7 +52,7 @@ export default function Register() {
                     type="password"
                     placeholder="Confirmar contraseña"
                     value={confirmar}
-                    onChange={(e) => setConfirmar(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmar(e.target.value)}
                     required
                     style={styles.input}
                 />
@@ -67,7 +68,7 @@ export default function Register() {
     );
 }
 
-const styles = {
+const styles: { [key: string]: CSSProperties } = {
     container: {
         display: 'flex',
         height: '100vh',
