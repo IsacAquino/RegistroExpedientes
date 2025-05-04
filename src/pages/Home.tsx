@@ -87,7 +87,7 @@ export default function Home() {
         return fechaStr;
     };
 
-    const convertirADateInput = (fechaStr: string): string => {
+    const convertirADateInput = (fechaStr?: string): string => {
         if (!fechaStr) return '';
         if (fechaStr.includes('/')) {
             const [dia, mes, año] = fechaStr.split('/');
@@ -95,6 +95,7 @@ export default function Home() {
         }
         return fechaStr;
     };
+
 
     const formatearFechaVisual = (fechaStr: string): string => {
         if (!fechaStr) return '';
