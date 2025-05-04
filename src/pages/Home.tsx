@@ -236,14 +236,14 @@ export default function Home() {
                                             <div>
                                                 <strong style={{ fontSize: 16 }}>{e.codigo}</strong>
                                                 <p style={{ margin: '4px 0', fontSize: 14 }}>{e.descripcion}</p>
-                                                <p style={{ margin: '4px 0', fontSize: 12 }}>Creado: {formatearFechaVisual(e.creado ?? '')}</p>
+                                                <p style={{ margin: '4px 0', fontSize: 12 }}>Creado: {formatearFechaVisual((e.creado ?? '') as string)}</p>
                                                 <p style={{
                                                     margin: '4px 0',
                                                     fontSize: 12,
                                                     color: vencido ? 'red' : hoy ? '#d38b00' : '#333',
                                                     fontWeight: vencido || hoy ? 'bold' : 'normal'
                                                 }}>
-                                                    <span>{vencido ? '🔴' : hoy ? '🟡' : '🗓️'} Vence: {formatearFechaVisual(e.vencimiento ?? '')}</span>
+                                                    <span>{vencido ? '🔴' : hoy ? '🟡' : '🗓️'} Vence: {formatearFechaVisual((e.vencimiento ?? '') as string)}</span>
 
                                                     {vencido && <span style={{
                                                         marginLeft: 6,
