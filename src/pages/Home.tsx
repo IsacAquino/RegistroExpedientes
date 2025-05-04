@@ -142,14 +142,15 @@ export default function Home() {
     const editarExpediente = (expediente: Expediente) => {
         setTitulo(expediente.codigo ?? '');
         setDescripcion(expediente.descripcion ?? '');
-        setFecha(convertirADateInput((expediente.creado ?? '') as string));
-        setVencimiento(convertirADateInput((expediente.vencimiento ?? '') as string));
+        setFecha(convertirADateInput(expediente.creado || ''));
+        setVencimiento(convertirADateInput(expediente.vencimiento || ''));
         setEstado(expediente.estado ?? 'Pendiente');
         setExpedienteEditar(expediente);
         setModoEdicion(true);
         setMostrarFormulario(true);
         setMenuAbiertoId(null);
     };
+
 
     const cambiarEstado = async (id: string, nuevoEstado: string) => {
         await updateDoc(doc(db, 'antecedentes', id), { estado: nuevoEstado });
