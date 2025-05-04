@@ -78,7 +78,7 @@ export default function Home() {
         navigate('/login');
     };
 
-    const normalizarFechaISO = (fechaStr: string): string => {
+    const normalizarFechaISO = (fechaStr: string | undefined): string => {
         if (!fechaStr) return '';
         if (fechaStr.includes('/')) {
             const [dia, mes, año] = fechaStr.split('/');
@@ -97,12 +97,14 @@ export default function Home() {
     };
 
 
-    const formatearFechaVisual = (fechaStr: string): string => {
+
+    const formatearFechaVisual = (fechaStr: string | undefined): string => {
         if (!fechaStr) return '';
         if (fechaStr.includes('/')) return fechaStr;
         const [año, mes, dia] = fechaStr.split('-');
         return `${dia}/${mes}/${año}`;
     };
+
 
     const guardarExpediente = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
