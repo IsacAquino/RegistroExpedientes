@@ -142,8 +142,8 @@ export default function Home() {
     const editarExpediente = (expediente: Expediente) => {
         setTitulo(expediente.codigo ?? '');
         setDescripcion(expediente.descripcion ?? '');
-        setFecha(convertirADateInput(expediente.creado ?? ''));
-        setVencimiento(convertirADateInput(expediente.vencimiento ?? ''));
+        setFecha(convertirADateInput(expediente.creado ?? ''))
+        setVencimiento(convertirADateInput(expediente.vencimiento ?? ''))
         setEstado(expediente.estado ?? 'Pendiente');
         setExpedienteEditar(expediente);
         setModoEdicion(true);
